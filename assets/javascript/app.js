@@ -36,5 +36,5 @@ $(document).ready(function () {
        //console.log(searchObj.endYear);
      
     })
-
+    getArticles();
 })
