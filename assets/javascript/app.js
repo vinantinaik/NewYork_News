@@ -23,5 +23,18 @@ $(document).ready(function () {
             throw err;
         });
     }
+    $("#searchBtn").on("click",function(){
+      debugger
 
+      searchObj.searchTerm=$("#search").val();
+      //console.log(searchObj.searchTerm);
+      searchObj.numRecds=$("#exampleFormControlSelect1").val();    
+     // console.log(searchObj.numRecds);  
+      searchObj.startYear=$("#startYear").val(); 
+       //console.log(searchObj.startYear);
+      searchObj.endYear=$("#endYear").val(); 
+       //console.log(searchObj.endYear);
+     
+    })
+    getArticles();
 })
