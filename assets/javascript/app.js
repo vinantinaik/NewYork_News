@@ -1,63 +1,69 @@
 $(document).ready(function () {
 
-    $("#searchBtn").on("click", function () {
 
-        let search = $('#search').val();
-        let numRec = $('#numRec').val();
-        let startYear = $('#startYear').val();
-        let endYear = $('#endYear').val();
+    var searchObj ={
+		'api-key' : "a6fafa0f676b487eb61ae9b100d08673",
+        q:"",
+		begin_date:undefined,
+		end_date:undefined,
+        page : 0,
+             
+    }
 
-        if (startYear > endYear) {
-            alert('Start year must be lower than end year!');
-        } else if (search === '') {
-            alert('You must enter a search term!');
-        } else if (startYear === '' || startYear < 1980 || startYear > 2018) {
-            alert('You must enter a start year between 1980 and the current year!');
-        } else if (endYear === '' || endYear > 2018) {
-            alert('You must enter a valid end year!');
-        } else {
 
-            $('#info').empty();
 
-            var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-            url += '?' + $.param({
-                'api-key': "a6fafa0f676b487eb61ae9b100d08673",
-                'q': search,
-                'begin_date': startYear + '0101',
-                'end_date': endYear + '0101',
-                'page': numRec
-            });
+    function getArticles(sObj) {
+        var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+        url += '?' + $.param(sObj);
+        $.ajax({
+            url: url,
+            method: 'GET',
+        }).then(function (result) {
+            responseHandler(result.response.docs);
+     
+        });
+    }
+    $("#searchBtn").on("click",function(e){
+      
+      e.preventDefault();
+      searchObj.q=$("#search").val();
+      searchObj.page=$("#numRec").val();    
+      searchObj.begin_date=$("#startYear").val(); 
+      searchObj.end_date=$("#endYear").val(); 
 
-            $.ajax({
-                url: url,
-                method: 'GET',
-            }).done(function (result) {
+      if(searchObj.begin_date === undefined || searchObj.begin_date === "")
+      {
+          delete searchObj.begin_date;
+      }
 
-                let articles = result.response.docs;
-                console.log(result);
-                for (let i = 0; i < articles.length; i++) {
-                    $('#info').append(`
-                <div class="article">
-                    <h3>${articles[i].headline.main}</h3>
-                    <p>${articles[i].snippet}</p>
-                    <a href="${articles[i].web_url}" target="_blank">full article</a>
-                </div>
-                <div class="spacer"></div>
-                `);
-                }
-                $('.article').css({
-                    'border': '1px solid #428bca',
-                    'border-radius': '3px',
-                    'padding': '1rem'
-                });
-                $('.spacer').css('height', '1rem');
-
-            }).fail(function (err) {
-                throw err;
-            });
-        }
-    });
-
+      if(searchObj.end_date === undefined || searchObj.end_date === "")
+      {
+          delete searchObj.end_date;
+      }
+      getArticles(searchObj);   
+     
+    })
+	
+	
+	function responseHandler(articles)
+	{
+		$("#info").empty();
+		$.each(articles,function(key,article){
+            var h3Tag = $("<h3>");
+            var pTag=$("<p>");
+            var aRefTag=$("<a>");
+            var hr=$("<hr>")
+			h3Tag.addClass("header");
+            h3Tag.text(article.headline.main);
+            pTag.text(article.snippet);
+            aRefTag.attr("href",article.web_url);
+            aRefTag.text(article.source);
+            $("#info").append(h3Tag,pTag,aRefTag,hr);
+            
+		});
+	}
+    
+})
     $('#clearBtn').on('click', function () {
         $('#info').empty();
         $('#search').val('');
@@ -66,3 +72,4 @@ $(document).ready(function () {
         $('#endYear').val('');
     })
 });
+
