@@ -61,9 +61,9 @@ $(document).ready(function () {
             $("#info").append(h3Tag,pTag,aRefTag,hr);
             
 		});
-	}
+    }
     
-})
+
     $('#clearBtn').on('click', function () {
         $('#info').empty();
         $('#search').val('');
@@ -71,5 +71,7 @@ $(document).ready(function () {
         $('#startYear').val('');
         $('#endYear').val('');
     })
-});
 
+    
+});
+   
